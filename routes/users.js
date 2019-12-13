@@ -52,21 +52,17 @@ router.findOne = (req, res) => {
         if (err)
             return res.json(err);
         else {
-            if (user == null) {
-                return res.json({message: "user NOT Found!"});
-            } else {
-                user.age = getAge(user.dateOfBirth);
+            user.age = getAge(user.dateOfBirth);
 
-                user.save(function (err) {
-                    if (err)
-                        return res.json({message: "User age NOT Successfully updated!", errmsg: err});
-                    // return a suitable error message
-                    else
-                        return res.json(user);
-                    // return a suitable success message
-                });
+            user.save(function (err) {
+                if (err)
+                    return res.json({message: "User age NOT Successfully updated!", errmsg: err});
+                // return a suitable error message
+                else
+                    return res.json(user);
+                // return a suitable success message
+            });
 
-            }
         }
     });
 };

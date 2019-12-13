@@ -14,10 +14,7 @@ router.findAllInProject = (req, res) => {
         if (err)
             return res.json(err);
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else
-                return res.json(tracing.tasksID);
+            return res.json(tracing.tasksID);
         }
     });
 };
@@ -32,20 +29,13 @@ router.findOneInProject = (req, res) => {
             return res.json({message: "Project NOT Found!", errmsg: err});
         // return a suitable error message
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Task.findById(req.params.taskID, function (err, task) {
-                    if (err)
-                        return res.json(err);
-                    else {
-                        if (task == null) {
-                            return res.json({message: "task NOT Found!"});
-                        } else
-                            return res.json(task);
-                    }
-                });
-            }
+            Task.findById(req.params.taskID, function (err, task) {
+                if (err)
+                    return res.json(err);
+                else {
+                    return res.json(task);
+                }
+            });
         }
     });
 };
@@ -58,21 +48,13 @@ router.findAllInTeam = (req, res) => {
         if (err)
             return res.json(err);
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Team.findById(req.params.teamID, function (err, team) {
-                    if (err)
-                        return res.json(err);
-                    else {
-                        if (team == null) {
-                            return res.json({message: "team NOT Found!"});
-                        } else
-                            return res.json(team.tasksID);
-                    }
-                });
-
-            }
+            Team.findById(req.params.teamID, function (err, team) {
+                if (err)
+                    return res.json(err);
+                else {
+                    return res.json(team.tasksID);
+                }
+            });
         }
     });
 };
@@ -85,30 +67,19 @@ router.findOneInTeam = (req, res) => {
         if (err)
             return res.json(err);
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Team.findById(req.params.teamID, function (err, team) {
-                    if (err)
-                        return res.json(err);
-                    else {
-                        if (team == null) {
-                            return res.json({message: "team NOT Found!"});
-                        } else {
-                            Task.findById(req.params.taskID, function (err, task) {
-                                if (err)
-                                    return res.json(err);
-                                else {
-                                    if (task == null) {
-                                        return res.json({message: "task NOT Found!"});
-                                    } else
-                                        return res.json(task);
-                                }
-                            });
+            Team.findById(req.params.teamID, function (err, team) {
+                if (err)
+                    return res.json(err);
+                else {
+                    Task.findById(req.params.taskID, function (err, task) {
+                        if (err)
+                            return res.json(err);
+                        else {
+                            return res.json(task);
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
         }
     });
 };
@@ -123,66 +94,58 @@ router.addTask = (req, res) => {
             return res.json({message: "Project NOT Found!", errmsg: err});
         // return a suitable error message
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Team.findById(req.params.teamID, function (err, team) {
-                    if (err)
-                        return res.json({message: "team NOT Found!", errmsg: err});
-                    // return a suitable error message
-                    else {
-                        if (team == null) {
-                            return res.json({message: "team NOT Found!"});
-                        } else {
-                            let task = new Task();
+            Team.findById(req.params.teamID, function (err, team) {
+                if (err)
+                    return res.json({message: "team NOT Found!", errmsg: err});
+                // return a suitable error message
+                else {
+                    let task = new Task();
 
-                            task.taskName = req.body.taskName;
-                            task.membersID = req.body.membersID;
-                            task.taskContent = req.body.taskContent
+                    task.taskName = req.body.taskName;
+                    task.membersID = req.body.membersID;
+                    task.taskContent = req.body.taskContent
 
-                            task.projectID = tracing._id;
-                            task.teamID = team._id;
+                    task.projectID = tracing._id;
+                    task.teamID = team._id;
 
-                            let nowTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-                            task.createdTime = nowTime;
-                            task.lastModifiedTime = nowTime;
+                    let nowTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                    task.createdTime = nowTime;
+                    task.lastModifiedTime = nowTime;
 
-                            task.save(function (err) {
+                    task.save(function (err) {
+                        if (err)
+                            return res.json({message: "task NOT Successfully Added!", errmsg: err});
+                        else {
+                            team.tasksID.push(task._id);
+                            team.tasksNum = team.tasksNum + 1;
+                            team.lastModifiedTime = nowTime;
+
+                            team.save(function (err) {
                                 if (err)
-                                    return res.json({message: "task NOT Successfully Added!", errmsg: err});
+                                    return res.json({
+                                        message: "task Successfully Added BUT NOT added to team!!!",
+                                        errmsg: err
+                                    });
                                 else {
-                                    team.tasksID.push(task._id);
-                                    team.tasksNum = team.tasksNum + 1;
-                                    team.lastModifiedTime = nowTime;
+                                    tracing.tasksID.push(task._id);
+                                    tracing.tasksNum = tracing.tasksNum + 1;
+                                    tracing.lastModifiedTime = nowTime;
 
-                                    team.save(function (err) {
+                                    tracing.save(function (err) {
                                         if (err)
                                             return res.json({
-                                                message: "task Successfully Added BUT NOT added to team!!!",
+                                                message: "task Successfully Added to team BUT NOT added to project!!!",
                                                 errmsg: err
                                             });
-                                        else {
-                                            tracing.tasksID.push(task._id);
-                                            tracing.tasksNum = tracing.tasksNum + 1;
-                                            tracing.lastModifiedTime = nowTime;
-
-                                            tracing.save(function (err) {
-                                                if (err)
-                                                    return res.json({
-                                                        message: "task Successfully Added to team BUT NOT added to project!!!",
-                                                        errmsg: err
-                                                    });
-                                                else
-                                                    return res.json({message: 'task Successfully Added!', data: task});
-                                            })
-                                        }
+                                        else
+                                            return res.json({message: 'task Successfully Added!'});
                                     })
                                 }
                             })
                         }
-                    }
-                });
-            }
+                    })
+                }
+            });
         }
     });
 };
@@ -197,32 +160,25 @@ router.updateTaskContent = (req, res) => {
             return res.json({message: "Project NOT Found!", errmsg: err});
         // return a suitable error message
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Task.findById(req.params.taskID, function (err, task) {
-                    if (err)
-                        return res.json({message: "task NOT Found!", errmsg: err});
-                    else {
-                        if (task == null) {
-                            return res.json({message: "task NOT Found!"});
-                        } else {
-                            //task.taskName = req.body.taskName;
-                            task.taskContent = req.body.taskContent;
-                            //task.status = req.body.status;
+            Task.findById(req.params.taskID, function (err, task) {
+                if (err)
+                    return res.json({message: "task NOT Found!", errmsg: err});
+                else {
+                    //task.taskName = req.body.taskName;
+                    task.taskContent = req.body.taskContent;
+                    //task.status = req.body.status;
 
-                            task.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                    task.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-                            task.save(function (err) {
-                                if (err)
-                                    return res.json({message: "task content NOT Successfully Update!", errmsg: err});
-                                else
-                                    return res.json({message: 'task content Successfully Update!', data: task});
-                            })
-                        }
-                    }
-                })
-            }
+                    task.save(function (err) {
+                        if (err)
+                            return res.json({message: "task content NOT Successfully Update!", errmsg: err});
+                        else
+                            return res.json({message: 'task content Successfully Update!', data: task});
+                    })
+
+                }
+            })
         }
     });
 };
@@ -237,32 +193,24 @@ router.updateTaskName = (req, res) => {
             return res.json({message: "Project NOT Found!", errmsg: err});
         // return a suitable error message
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Task.findById(req.params.taskID, function (err, task) {
-                    if (err)
-                        return res.json({message: "task NOT Found!", errmsg: err});
-                    else {
-                        if (task == null) {
-                            return res.json({message: "task NOT Found!"});
-                        } else {
-                            task.taskName = req.body.taskName;
-                            //task.taskContent = req.body.taskContent;
-                            //task.status = req.body.status;
+            Task.findById(req.params.taskID, function (err, task) {
+                if (err)
+                    return res.json({message: "task NOT Found!", errmsg: err});
+                else {
+                    task.taskName = req.body.taskName;
+                    //task.taskContent = req.body.taskContent;
+                    //task.status = req.body.status;
 
-                            task.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                    task.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-                            task.save(function (err) {
-                                if (err)
-                                    return res.json({message: "task name NOT Successfully Update!", errmsg: err});
-                                else
-                                    return res.json({message: 'task name Successfully Update!', data: task});
-                            })
-                        }
-                    }
-                })
-            }
+                    task.save(function (err) {
+                        if (err)
+                            return res.json({message: "task name NOT Successfully Update!", errmsg: err});
+                        else
+                            return res.json({message: 'task name Successfully Update!', data: task});
+                    })
+                }
+            })
         }
     });
 };
@@ -277,32 +225,25 @@ router.updateTaskStatus = (req, res) => {
             return res.json({message: "Project NOT Found!", errmsg: err});
         // return a suitable error message
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Task.findById(req.params.taskID, function (err, task) {
-                    if (err)
-                        return res.json({message: "task NOT Found!", errmsg: err});
-                    else {
-                        if (task == null) {
-                            return res.json({message: "task NOT Found!"});
-                        } else {
-                            //task.taskName = req.body.taskName;
-                            //task.taskContent = req.body.taskContent;
-                            task.status = req.body.status;
+            Task.findById(req.params.taskID, function (err, task) {
+                if (err)
+                    return res.json({message: "task NOT Found!", errmsg: err});
+                else {
+                    //task.taskName = req.body.taskName;
+                    //task.taskContent = req.body.taskContent;
+                    task.status = req.body.status;
 
-                            task.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                    task.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-                            task.save(function (err) {
-                                if (err)
-                                    return res.json({message: "task status NOT Successfully Update!", errmsg: err});
-                                else
-                                    return res.json({message: 'task status Successfully Update!', data: task});
-                            })
-                        }
-                    }
-                })
-            }
+                    task.save(function (err) {
+                        if (err)
+                            return res.json({message: "task status NOT Successfully Update!", errmsg: err});
+                        else
+                            return res.json({message: 'task status Successfully Update!', data: task});
+                    })
+
+                }
+            })
         }
     });
 };
@@ -317,59 +258,53 @@ router.deleteTask = (req, res) => {
             return res.json({message: "Project NOT Found!", errmsg: err});
         // return a suitable error message
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
-                Team.findById(req.params.teamID, function (err, team) {
-                    if (err)
-                        return res.json({message: "team NOT Found!", errmsg: err});
-                    // return a suitable error message
-                    else {
-                        if (team == null) {
-                            return res.json({message: "team NOT Found!"});
-                        } else {
-                            Task.findByIdAndRemove(req.params.taskID, function (err) {
-                                if (err)
-                                    return res.json({message: "task NOT Successfully Deleted!", errmsg: err});
-                                else {
-                                    team.tasksID.remove(req.params.taskID);
-                                    team.tasksNum = team.tasksNum - 1;
-                                    if (team.tasksNum < 0) {
-                                        team.tasksNum = 0;
-                                    }
-                                    team.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+            Team.findById(req.params.teamID, function (err, team) {
+                if (err)
+                    return res.json({message: "team NOT Found!", errmsg: err});
+                // return a suitable error message
+                else {
+                    Task.findByIdAndRemove(req.params.taskID, function (err) {
+                        if (err)
+                            return res.json({message: "task NOT Successfully Deleted!"});
+                        else {
+                            team.tasksID.remove(req.params.taskID);
+                            team.tasksNum = team.tasksNum - 1;
+                            if (team.tasksNum < 0) {
+                                team.tasksNum = 0;
+                            }
+                            team.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-                                    team.save(function (err) {
+                            team.save(function (err) {
+                                if (err)
+                                    return res.json({
+                                        message: "task delete BUT team did NOT delete the task ID!",
+                                        errmsg: err
+                                    });
+                                else {
+                                    tracing.tasksID.remove(req.params.taskID);
+                                    tracing.tasksNum = tracing.tasksNum - 1;
+                                    if (tracing.tasksNum < 0) {
+                                        tracing.tasksNum = 0;
+                                    }
+                                    tracing.lastModifiedTime = team.lastModifiedTime;
+
+                                    tracing.save(function (err) {
                                         if (err)
                                             return res.json({
-                                                message: "task delete BUT team did NOT delete the task ID!",
+                                                message: "task deleted and team delete the task ID BUT project NOT !",
                                                 errmsg: err
                                             });
-                                        else {
-                                            tracing.tasksID.remove(req.params.taskID);
-                                            tracing.tasksNum = tracing.tasksNum - 1;
-                                            if (tracing.tasksNum < 0) {
-                                                tracing.tasksNum = 0;
-                                            }
-                                            tracing.lastModifiedTime = team.lastModifiedTime;
-
-                                            tracing.save(function (err) {
-                                                if (err)
-                                                    return res.json({
-                                                        message: "task deleted and team delete the task ID BUT project NOT !",
-                                                        errmsg: err
-                                                    });
-                                                else
-                                                    return res.json({message: 'task Successfully Deleted!'});
-                                            })
-                                        }
+                                        else
+                                            return res.json({message: 'task Successfully Deleted!'});
                                     })
                                 }
-                            });
+                            })
                         }
-                    }
-                });
-            }
+                    });
+
+                }
+            });
+
         }
     });
 };
