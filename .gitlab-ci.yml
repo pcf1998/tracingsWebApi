@@ -5,6 +5,9 @@ cache:
   paths:
     - node_modules/
 
+services:
+   - mongo
+
 variables:
   NODE_ENV: 'test'
 
@@ -30,3 +33,4 @@ Build_and_Test:
      - npm run clean
   script:
     - npm run compile:all
+    - npm test
