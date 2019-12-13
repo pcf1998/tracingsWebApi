@@ -16,6 +16,7 @@ variables:
 stages:
   - install
   - build
+  - deploy
 
 # Jobs:
 
@@ -43,3 +44,12 @@ coverage:
     artifacts:
        paths:
           - coverage/
+        
+pages:
+  stage: deploy
+  script:
+    - echo "Publish website"
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
