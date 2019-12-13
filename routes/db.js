@@ -1,9 +1,8 @@
 let mongoose = require('mongoose');
+const dotenv = require("dotenv");
+dotenv.config();
 
-let username = 'leopan';
-let password = 'leo123456';
-let mongodburl = 'mongodb+srv://' + username + ':' + password + '@wit-tracking-system-cluster-t9uwg.mongodb.net/tracingsdb';
-mongoose.connect(mongodburl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 let db = mongoose.connection;
 

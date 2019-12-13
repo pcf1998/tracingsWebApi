@@ -12,12 +12,9 @@ router.findAll = (req, res) => {
     Tracing.find(function (err, tracings) {
         if (err)
             return res.json(err);
-        else {
-            if (tracings == null) {
-                return res.json({message: "No Projects"});
-            } else
-                return res.json(tracings);
-        }
+        else
+            return res.json(tracings);
+
     });
 };
 
@@ -28,13 +25,9 @@ router.findOne = (req, res) => {
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
             return res.json(err);
-        else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else
-            //return res.json({data:tracing});
-                res.send(JSON.stringify(tracing, null, 5))
-        }
+        else
+            res.json(tracing)
+
     });
 };
 
@@ -64,7 +57,7 @@ router.addTracing = (req, res) => {
             return res.json({message: "Tracing NOT Successfully Added!", errmsg: err});
         // return a suitable error message
         else
-            return res.json({message: 'Tracing Successfully Added!', data: tracing});
+            return res.json({message: 'Tracing Successfully Added!'});
         // return a suitable success message
     });
 };
@@ -77,43 +70,37 @@ router.updateProject = (req, res) => {
         if (err)
             return res.json(err);
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
-            } else {
+            let originalProjectName = tracing.projectName;
+            let newProjectName = req.body.projectName;
 
-                let originalProjectName = tracing.projectName;
-                let newProjectName = req.body.projectName;
+            let originalStatus = tracing.status;
+            let newStatus = req.body.status;
 
-                let originalStatus = tracing.status;
-                let newStatus = req.body.status;
-
-                if (req.body.projectName == null) {
-                    newProjectName = originalProjectName;
-                }
-                if (req.body.status == null) {
-                    newStatus = originalStatus;
-                }
-
-                tracing.projectName = newProjectName;
-                tracing.status = newStatus;
-
-                tracing.stagesNum = tracing.stages.length;
-                tracing.teamsNum = tracing.teamsID.length;
-                tracing.tasksNum = tracing.tasksID.length;
-
-                //update last modified time
-                tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-
-                tracing.save(function (err) {
-                    if (err)
-                        return res.json({message: "project NOT Successfully Updated!", errmsg: err});
-                    // return a error message
-                    else
-                        return res.json({message: 'project Successfully Updated!', data: tracing});
-                    // return a success message
-                })
-
+            if (req.body.projectName == null) {
+                newProjectName = originalProjectName;
             }
+            if (req.body.status == null) {
+                newStatus = originalStatus;
+            }
+
+            tracing.projectName = newProjectName;
+            tracing.status = newStatus;
+
+            tracing.stagesNum = tracing.stages.length;
+            tracing.teamsNum = tracing.teamsID.length;
+            tracing.tasksNum = tracing.tasksID.length;
+
+            //update last modified time
+            tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+
+            tracing.save(function (err) {
+                if (err)
+                    return res.json({message: "project NOT Successfully Updated!", errmsg: err});
+                // return a error message
+                else
+                    return res.json({message: 'project Successfully Updated!', data: tracing});
+                // return a success message
+            })
         }
     });
 };
@@ -168,29 +155,26 @@ router.updateStage = (req, res) => {
         if (err)
             return res.json(err);
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
+            let indexOfStage = req.params.whichStageToModify - 1;
+            if (indexOfStage < 0 || indexOfStage >= tracing.stagesNum) {
+                return res.json({message: "can NOT find the stage !!!"});
             } else {
-                let indexOfStage = req.params.whichStageToModify - 1;
-                if (indexOfStage < 0 || indexOfStage >= tracing.stagesNum) {
-                    return res.json({message: "can NOT find the stage !!!"});
-                } else {
-                    tracing.stages[indexOfStage] = req.body.stages;
-                    tracing.markModified('stages');
+                tracing.stages[indexOfStage] = req.body.stages;
+                tracing.markModified('stages');
 
-                    //update last modified time
-                    tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                //update last modified time
+                tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-                    tracing.save(function (err) {
-                        if (err)
-                            return res.json({message: "stage NOT Successfully Modified!", errmsg: err});
-                        // return a suitable error message
-                        else
-                            return res.json({message: 'stage Successfully Modified!', data: tracing});
-                        // return a suitable success message
-                    })
-                }
+                tracing.save(function (err) {
+                    if (err)
+                        return res.json({message: "stage NOT Successfully Modified!", errmsg: err});
+                    // return a suitable error message
+                    else
+                        return res.json({message: 'stage Successfully Modified!', data: tracing});
+                    // return a suitable success message
+                })
             }
+
         }
     });
 };
@@ -203,39 +187,34 @@ router.addStages = (req, res) => {
         if (err)
             res.json(err);
         else {
+            let originalNumOfStages = tracing.stagesNum;
+            let addedStages = req.body.stages;
+            let numAddedStages = addedStages.length;
 
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
+            if (numAddedStages > 0) {
+                for (let i = 0; i < numAddedStages; i++) {
+                    tracing.stages.push(addedStages[i]);
+                }
             } else {
-                let originalNumOfStages = tracing.stagesNum;
-                let addedStages = req.body.stages;
-                let numAddedStages = addedStages.length;
+                return res.json({message: "the number of added stages can't be 0 !"});
+            }
 
-                if (numAddedStages > 0) {
-                    for (let i = 0; i < numAddedStages; i++) {
-                        tracing.stages.push(addedStages[i]);
-                    }
-                } else {
-                    return res.json({message: "the number of added stages can't be 0 !"});
-                }
+            let newNumOfStages = tracing.stages.length;
+            if (originalNumOfStages === newNumOfStages) {
+                return res.json({message: "stage NOT Added!"});
+            } else {
+                //update last modified time
+                tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                tracing.stagesNum = tracing.stages.length;
 
-                let newNumOfStages = tracing.stages.length;
-                if (originalNumOfStages === newNumOfStages) {
-                    return res.json({message: "stage NOT Added!"});
-                } else {
-                    //update last modified time
-                    tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-                    tracing.stagesNum = tracing.stages.length;
-
-                    tracing.save(function (err) {
-                        if (err)
-                            return res.json({message: "stages NOT Successfully Added!", errmsg: err});
-                        // return a suitable error message
-                        else
-                            return res.json({message: 'stages Successfully Added!', data: tracing.stages});
-                        // return a suitable success message
-                    })
-                }
+                tracing.save(function (err) {
+                    if (err)
+                        return res.json({message: "stages NOT Successfully Added!", errmsg: err});
+                    // return a suitable error message
+                    else
+                        return res.json({message: 'stages Successfully Added!', data: tracing.stages});
+                    // return a suitable success message
+                })
             }
         }
     });
@@ -270,36 +249,32 @@ router.deleteStage = (req, res) => {
         if (err)
             res.json(err);
         else {
-            if (tracing == null) {
-                return res.json({message: "project NOT Found!"});
+            if (isNumber(req.params.whichStageToDelete) === false) {
+                return res.json({message: "which Stage To Delete MUST be a legal NUMBER"});
             } else {
-                if (isNumber(req.params.whichStageToDelete) === false) {
-                    return res.json({message: "which Stage To Delete MUST be a legal NUMBER"});
+                let indexOfStage = req.params.whichStageToDelete - 1;
+                if (indexOfStage < 0 || indexOfStage >= tracing.stagesNum) {
+                    return res.json({message: "can NOT find the stage !!!"});
                 } else {
-                    let indexOfStage = req.params.whichStageToDelete - 1;
-                    if (indexOfStage < 0 || indexOfStage >= tracing.stagesNum) {
-                        return res.json({message: "can NOT find the stage !!!"});
-                    } else {
-                        tracing.stages.splice(indexOfStage, 1);
+                    tracing.stages.splice(indexOfStage, 1);
 
-                        //update stageNum
-                        tracing.stagesNum = tracing.stagesNum - 1;
-                        if (tracing.stagesNum < 0) {
-                            tracing.stagesNum = 0;
-                        }
-
-                        //update last modified time
-                        tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-
-                        tracing.save(function (err) {
-                            if (err)
-                                return res.json({message: "stage NOT Successfully Deleted!", errmsg: err});
-                            // return a suitable error message
-                            else
-                                return res.json({message: 'stage Successfully Deleted!', data: tracing});
-                            // return a suitable success message
-                        })
+                    //update stageNum
+                    tracing.stagesNum = tracing.stagesNum - 1;
+                    if (tracing.stagesNum < 0) {
+                        tracing.stagesNum = 0;
                     }
+
+                    //update last modified time
+                    tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+
+                    tracing.save(function (err) {
+                        if (err)
+                            return res.json({message: "stage NOT Successfully Deleted!", errmsg: err});
+                        // return a suitable error message
+                        else
+                            return res.json({message: 'stage Successfully Deleted!', data: tracing});
+                        // return a suitable success message
+                    })
                 }
             }
         }
