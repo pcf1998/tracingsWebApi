@@ -5,6 +5,7 @@ let sd = require('silly-datetime');
 var router = express.Router();
 
 //login
+/*
 router.login = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
@@ -31,6 +32,7 @@ router.login = (req, res) => {
         }
     });
 };
+*/
 
 //find all users
 router.findAll = (req, res) => {
@@ -129,7 +131,7 @@ router.updateUserName = (req, res) => {
                     return res.json({message: "user name NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user name Successfully Updated!', data: user});
+                    return res.json({message: 'user name Successfully Updated!'});
                 // return a success message
             })
         }
@@ -163,13 +165,14 @@ router.updateUserPassword = (req, res) => {
                                 errmsg: err
                             });
                         else
-                            return res.json({message: 'User password Successfully Updated!', data: user});
+                            return res.json({message: 'User password Successfully Updated!'});
                     });
                 }
             })
         }
     });
 };
+/*
 
 //update Status
 router.updateStatus = (req, res) => {
@@ -192,7 +195,7 @@ router.updateStatus = (req, res) => {
                     return res.json({message: "user status NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user status Successfully Updated!', data: user});
+                    return res.json({message: 'user status Successfully Updated!'});
                 // return a success message
             })
         }
@@ -220,7 +223,7 @@ router.updateDepartment = (req, res) => {
                     return res.json({message: "user department NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user department Successfully Updated!', data: user});
+                    return res.json({message: 'user department Successfully Updated!'});
                 // return a success message
             })
         }
@@ -248,7 +251,7 @@ router.updatePosition = (req, res) => {
                     return res.json({message: "user position NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user position Successfully Updated!', data: user});
+                    return res.json({message: 'user position Successfully Updated!'});
                 // return a success message
             })
         }
@@ -276,7 +279,7 @@ router.updateEmail = (req, res) => {
                     return res.json({message: "user email NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user email Successfully Updated!', data: user});
+                    return res.json({message: 'user email Successfully Updated!'});
                 // return a success message
             })
         }
@@ -304,7 +307,7 @@ router.updateMobilePhone = (req, res) => {
                     return res.json({message: "user mobilePhone NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user mobilePhone Successfully Updated!', data: user});
+                    return res.json({message: 'user mobilePhone Successfully Updated!'});
                 // return a success message
             })
         }
@@ -332,7 +335,7 @@ router.updateFax = (req, res) => {
                     return res.json({message: "user fax NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user fax Successfully Updated!', data: user});
+                    return res.json({message: 'user fax Successfully Updated!'});
                 // return a success message
             })
         }
@@ -360,7 +363,7 @@ router.updateTelephone = (req, res) => {
                     return res.json({message: "user telephone NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user telephone Successfully Updated!', data: user});
+                    return res.json({message: 'user telephone Successfully Updated!'});
                 // return a success message
             })
         }
@@ -388,7 +391,7 @@ router.updateAddress = (req, res) => {
                     return res.json({message: "user address NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user address Successfully Updated!', data: user});
+                    return res.json({message: 'user address Successfully Updated!'});
                 // return a success message
             })
         }
@@ -416,7 +419,7 @@ router.updateGender = (req, res) => {
                     return res.json({message: "user gender NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user gender Successfully Updated!', data: user});
+                    return res.json({message: 'user gender Successfully Updated!'});
                 // return a success message
             })
         }
@@ -444,7 +447,7 @@ router.updateDateOfBirth = (req, res) => {
                     return res.json({message: "user date Of Birth NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user date Of Birth Successfully Updated!', data: user});
+                    return res.json({message: 'user date Of Birth Successfully Updated!'});
                 // return a success message
             })
         }
@@ -472,7 +475,7 @@ router.updateEducationalDegree = (req, res) => {
                     return res.json({message: "user educational Degree NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user educational Degree Successfully Updated!', data: user});
+                    return res.json({message: 'user educational Degree Successfully Updated!'});
                 // return a success message
             })
         }
@@ -500,7 +503,7 @@ router.updateMaritalStatus = (req, res) => {
                     return res.json({message: "user marital Status NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user marital Status Successfully Updated!', data: user});
+                    return res.json({message: 'user marital Status Successfully Updated!'});
                 // return a success message
             })
         }
@@ -528,14 +531,16 @@ router.updateEntryDate = (req, res) => {
                     return res.json({message: "user entry Date NOT Successfully Updated!", errmsg: err});
                 // return a error message
                 else
-                    return res.json({message: 'user entry Date Successfully Updated!', data: user});
+                    return res.json({message: 'user entry Date Successfully Updated!'});
                 // return a success message
             })
         }
     });
 };
+*/
 
 //update Leave
+/*
 router.updateLeave = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
@@ -564,6 +569,7 @@ router.updateLeave = (req, res) => {
         }
     });
 };
+*/
 
 //delete user
 router.deleteUser = (req, res) => {

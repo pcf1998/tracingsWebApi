@@ -106,6 +106,7 @@ describe("User", () => {
                 })
         })
     })
+/*
 
     describe("PUT /users/:userID/status", () => {
         it("should return confirmation message and update user status", () => {
@@ -301,6 +302,7 @@ describe("User", () => {
                 })
         })
     })
+*/
 
     describe("DELETE /users/:userID", () => {
 
