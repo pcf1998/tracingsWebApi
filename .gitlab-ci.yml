@@ -6,9 +6,10 @@ cache:
     - node_modules/
 
 variables:
-  NODE_ENV: 'test
+  NODE_ENV: 'test'
 
 # Pipeline:
+
 stages:
   - install
   - build
@@ -16,16 +17,16 @@ stages:
 # Jobs:
 
 install_dependencies:
-  stage: install
-  script:
-    - npm install
-  artifacts:
-    paths:
-      - node_modules/
+    stage: install
+    script:
+      - npm install
+    artifacts:
+      paths:
+        - node_modules/
 
 Build_and_Test:
   stage: build
   before_script:
-    - npm run clean
+     - npm run clean
   script:
     - npm run compile:all
