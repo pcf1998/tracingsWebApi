@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=dev && node bin/www",
-    "test": "NODE_ENV=test mocha test/functional/api --exit"
+    "test": "cross-env NODE_ENV=test mocha "
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
