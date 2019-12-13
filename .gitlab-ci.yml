@@ -17,6 +17,7 @@ stages:
   - install
   - build
   - deploy
+  - production
 
 # Jobs:
 
