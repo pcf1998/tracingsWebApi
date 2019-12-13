@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="bin/www" type="NodeJSConfigurationType" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="bin/www" type="NodeJSConfigurationType" path-to-js-file="$PROJECT_DIR$/../trackingweb-3.0/bin/www" working-dir="$PROJECT_DIR$/../trackingweb-3.0">
     <envs>
       <env name="DEBUG" value="trackingweb-1.0:*" />
     </envs>
     <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
-      <browser name="e5120d43-2c3f-47ef-9f26-65e539e05186" start="true" url="http://localhost:3000/" />
+      <browser name="e5120d43-2c3f-47ef-9f26-65e539e05186" url="http://localhost:3000/" />
     </EXTENSION>
     <method v="2" />
   </configuration>

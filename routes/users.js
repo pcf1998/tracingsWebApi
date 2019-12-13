@@ -4,6 +4,34 @@ let sd = require('silly-datetime');
 
 var router = express.Router();
 
+//login
+router.login = (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    var email = req.body.email;
+    var userPassword = req.body.userPassword;
+
+    User.findOne({email: email}, function (err, user) {
+        if (err)
+            return res.json(err);
+        else {
+            if (user == null) {
+                return res.json({code: -1, message: 'user do not exist'});
+            } else {
+                user.comparePassword(userPassword, function (err, isMatch) {
+                    if (err) throw err;
+                    else {
+                        if (isMatch)
+                            return res.json({code: 0, message: 'successfully'});
+                        else
+                            return res.json({code: -1, message: 'wrong email or password'});
+                    }
+                })
+            }
+        }
+    });
+};
+
 //find all users
 router.findAll = (req, res) => {
     // Return a JSON representation of tracings list
@@ -11,8 +39,8 @@ router.findAll = (req, res) => {
 
     User.find(function (err, users) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
-        return res.send(JSON.stringify(users, null, 5));
+            return res.json(err);
+        return res.json(users);
     });
 };
 
@@ -22,7 +50,7 @@ router.findOne = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (user == null) {
                 return res.json({message: "user NOT Found!"});
@@ -34,7 +62,7 @@ router.findOne = (req, res) => {
                         return res.json({message: "User age NOT Successfully updated!", errmsg: err});
                     // return a suitable error message
                     else
-                        return res.send(JSON.stringify(user, null, 5));
+                        return res.json(user);
                     // return a suitable success message
                 });
 
@@ -90,7 +118,7 @@ router.updateUserName = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.userName = req.body.userName;
 
@@ -118,7 +146,7 @@ router.updateUserPassword = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.userPassword = req.body.userPassword;
 
@@ -153,7 +181,7 @@ router.updateStatus = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.status = req.body.status;
 
@@ -181,7 +209,7 @@ router.updateDepartment = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.department = req.body.department;
 
@@ -209,7 +237,7 @@ router.updatePosition = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.position = req.body.position;
 
@@ -237,7 +265,7 @@ router.updateEmail = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.email = req.body.email;
 
@@ -265,7 +293,7 @@ router.updateMobilePhone = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.mobilePhone = req.body.mobilePhone;
 
@@ -293,7 +321,7 @@ router.updateFax = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.fax = req.body.fax;
 
@@ -321,7 +349,7 @@ router.updateTelephone = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.telephone = req.body.telephone;
 
@@ -349,7 +377,7 @@ router.updateAddress = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.address = req.body.address;
 
@@ -377,7 +405,7 @@ router.updateGender = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.gender = req.body.gender;
 
@@ -405,7 +433,7 @@ router.updateDateOfBirth = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.dateOfBirth = req.body.dateOfBirth;
 
@@ -433,7 +461,7 @@ router.updateEducationalDegree = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.educationalDegree = req.body.educationalDegree;
 
@@ -461,7 +489,7 @@ router.updateMaritalStatus = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.maritalStatus = req.body.maritalStatus;
 
@@ -489,7 +517,7 @@ router.updateEntryDate = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.entryDate = req.body.entryDate;
 
@@ -517,10 +545,11 @@ router.updateLeave = (req, res) => {
 
     User.findById(req.params.userID, function (err, user) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             user.leaveDate = sd.format(new Date(), 'YYYY-MM-DD');
 
+            user.authority = -1;
             user.status = 'resign';
             user.yearsOfWork = getAge(user.entryDate);
 

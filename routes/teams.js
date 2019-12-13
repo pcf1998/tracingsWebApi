@@ -12,8 +12,8 @@ router.findAll = (req, res) => {
 
     Team.find(function (err, teams) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
-        return res.send(JSON.stringify(teams, null, 5));
+            return res.json(err);
+        return res.json(teams);
     });
 };
 
@@ -23,12 +23,12 @@ router.findOne = (req, res) => {
 
     Team.findById(req.params.teamID, function (err, team) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (team == null) {
                 return res.json({message: "team NOT Found!"});
             } else
-                return res.send(JSON.stringify(team, null, 5));
+                return res.json(team);
         }
     });
 };
@@ -39,12 +39,12 @@ router.findAllInProject = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
             } else {
-                return res.send(JSON.stringify(tracing.teamsID, null, 5));
+                return res.json(tracing.teamsID);
             }
         }
     });
@@ -65,12 +65,12 @@ router.findOneInProject = (req, res) => {
             } else {
                 Team.findById(req.params.teamID, function (err, team) {
                     if (err)
-                        return res.send(JSON.stringify(err, null, 5));
+                        return res.json(err);
                     else {
                         if (team == null) {
                             return res.json({message: "team NOT Found!"});
                         } else
-                            return res.send(JSON.stringify(team, null, 5));
+                            return res.json(team);
                     }
                 });
             }
@@ -85,7 +85,7 @@ router.addTeam = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
@@ -133,7 +133,7 @@ router.addTeamMembersID = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            res.send(JSON.stringify(err, null, 5));
+            res.json(err);
         else {
 
             if (tracing == null) {
@@ -141,7 +141,7 @@ router.addTeamMembersID = (req, res) => {
             } else {
                 Team.findById(req.params.teamID, function (err, team) {
                     if (err)
-                        return res.send(JSON.stringify(err, null, 5));
+                        return res.json(err);
                     else {
                         if (team == null) {
                             return res.json({message: "team NOT Found!"});
@@ -225,6 +225,43 @@ router.updateTeamName = (req, res) => {
     });
 };
 
+router.updateTeamStatus = (req, res) => {
+
+    res.setHeader('Content-Type', 'application/json');
+
+    Tracing.findById(req.params.projectID, function (err, tracing) {
+        if (err)
+            return res.json({message: "Project NOT Found!", errmsg: err});
+        // return a suitable error message
+        else {
+            if (tracing == null) {
+                return res.json({message: "project NOT Found!"});
+            } else {
+                Team.findById(req.params.teamID, function (err, team) {
+                    if (err)
+                        return res.json({message: "team NOT Found!", errmsg: err});
+                    else {
+                        if (team == null) {
+                            return res.json({message: "team NOT Found!"});
+                        } else {
+                            team.status = req.body.status;
+
+                            team.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+
+                            team.save(function (err) {
+                                if (err)
+                                    return res.json({message: "team status NOT Successfully Update!", errmsg: err});
+                                else
+                                    return res.json({message: 'team status Successfully Update!', data: team});
+                            })
+                        }
+                    }
+                })
+            }
+        }
+    });
+};
+
 //update team member ID
 router.updateTeamMemberID = (req, res) => {
 
@@ -288,30 +325,46 @@ router.deleteTeam = (req, res) => {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
             } else {
-                Team.findByIdAndRemove(req.params.teamID, function (err) {
+
+                Team.findById(req.params.teamID, function (err, team) {
                     if (err)
-                        return res.json({message: "team NOT Successfully Deleted!", errmsg: err});
+                        return res.json(err);
                     else {
-                        tracing.teamsID.remove(req.params.teamID);
-                        tracing.teamsNum = tracing.teamsNum - 1;
-                        if (tracing.teamsNum < 0) {
-                            tracing.teamsNum = 0;
-                        }
-                        tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+                        if (team == null) {
+                            return res.json({message: "team NOT Found!"});
+                        } else {
+                            if (team.tasksNum === 0) {
+                                Team.findByIdAndRemove(req.params.teamID, function (err) {
+                                    if (err)
+                                        return res.json({message: "team NOT Successfully Deleted!", errmsg: err});
+                                    else {
+                                        tracing.teamsID.remove(req.params.teamID);
+                                        tracing.teamsNum = tracing.teamsNum - 1;
+                                        if (tracing.teamsNum < 0) {
+                                            tracing.teamsNum = 0;
+                                        }
+                                        tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-                        tracing.save(function (err) {
-                            if (err)
-                                return res.json({
-                                    message: "team delete BUT project did NOT delete the team ID!",
-                                    errmsg: err
+                                        tracing.save(function (err) {
+                                            if (err)
+                                                return res.json({
+                                                    message: "team delete BUT project did NOT delete the team ID!",
+                                                    errmsg: err
+                                                });
+                                            else {
+                                                return res.json({message: 'team Successfully Deleted!'});
+                                            }
+                                        })
+
+                                    }
                                 });
-                            else {
-                                return res.json({message: 'team Successfully Deleted!'});
+                            } else {
+                                return res.json({message: "Team can NOT be deleted, existing tasks in this team"})
                             }
-                        })
-
+                        }
                     }
                 });
+
             }
         }
     });

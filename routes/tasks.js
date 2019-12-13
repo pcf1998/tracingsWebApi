@@ -12,12 +12,12 @@ router.findAllInProject = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
             } else
-                return res.send(JSON.stringify(tracing.tasksID, null, 5));
+                return res.json(tracing.tasksID);
         }
     });
 };
@@ -37,12 +37,12 @@ router.findOneInProject = (req, res) => {
             } else {
                 Task.findById(req.params.taskID, function (err, task) {
                     if (err)
-                        return res.send(JSON.stringify(err, null, 5));
+                        return res.json(err);
                     else {
                         if (task == null) {
                             return res.json({message: "task NOT Found!"});
                         } else
-                            return res.send(JSON.stringify(task, null, 5));
+                            return res.json(task);
                     }
                 });
             }
@@ -56,19 +56,19 @@ router.findAllInTeam = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
             } else {
                 Team.findById(req.params.teamID, function (err, team) {
                     if (err)
-                        return res.send(JSON.stringify(err, null, 5));
+                        return res.json(err);
                     else {
                         if (team == null) {
                             return res.json({message: "team NOT Found!"});
                         } else
-                            return res.send(JSON.stringify(team.tasksID, null, 5));
+                            return res.json(team.tasksID);
                     }
                 });
 
@@ -83,26 +83,26 @@ router.findOneInTeam = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
             } else {
                 Team.findById(req.params.teamID, function (err, team) {
                     if (err)
-                        return res.send(JSON.stringify(err, null, 5));
+                        return res.json(err);
                     else {
                         if (team == null) {
                             return res.json({message: "team NOT Found!"});
                         } else {
                             Task.findById(req.params.taskID, function (err, task) {
                                 if (err)
-                                    return res.send(JSON.stringify(err, null, 5));
+                                    return res.json(err);
                                 else {
                                     if (task == null) {
                                         return res.json({message: "task NOT Found!"});
                                     } else
-                                        return res.send(JSON.stringify(task, null, 5));
+                                        return res.json(task);
                                 }
                             });
                         }
@@ -138,6 +138,7 @@ router.addTask = (req, res) => {
 
                             task.taskName = req.body.taskName;
                             task.membersID = req.body.membersID;
+                            task.taskContent = req.body.taskContent
 
                             task.projectID = tracing._id;
                             task.teamID = team._id;

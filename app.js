@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -26,6 +27,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use(cors());
+
+//log in
+app.post('/login', users.login);
 
 //for users
 app.get('/users', users.findAll);
@@ -75,8 +80,7 @@ app.put('/users/:userID/maritalStatus', users.updateMaritalStatus);
 app.put('/users/:userID/entryDate', users.updateEntryDate);
 app.put('/users/:userID/leave', users.updateLeave);
 //for tracings
-app.put('/tracings/:projectID/projectName', tracings.updateProjectName);
-app.put('/tracings/:projectID/status', tracings.updateProjectStatus);
+app.put('/tracings/:projectID', tracings.updateProject);
 app.put('/tracings/:projectID/stages/:whichStageToModify', tracings.updateStage);
 //for tasks
 app.put('/tracings/:projectID/teams/:teamID/tasks/:taskID/taskContent', tasks.updateTaskContent);
@@ -84,6 +88,7 @@ app.put('/tracings/:projectID/teams/:teamID/tasks/:taskID/taskName', tasks.updat
 app.put('/tracings/:projectID/teams/:teamID/tasks/:taskID/taskStatus', tasks.updateTaskStatus);
 //for teams
 app.put('/tracings/:projectID/teams/:teamID/teamName', teams.updateTeamName);
+app.put('/tracings/:projectID/teams/:teamID/teamStatus', teams.updateTeamStatus);
 app.put('/tracings/:projectID/teams/:teamID/teamMembersID/:whichTeamMemberIDToUpdate', teams.updateTeamMemberID);
 
 

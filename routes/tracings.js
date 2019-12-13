@@ -11,12 +11,12 @@ router.findAll = (req, res) => {
 
     Tracing.find(function (err, tracings) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracings == null) {
                 return res.json({message: "No Projects"});
             } else
-                return res.send(JSON.stringify(tracings, null, 5));
+                return res.json(tracings);
         }
     });
 };
@@ -27,12 +27,13 @@ router.findOne = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
             } else
-                return res.send(JSON.stringify(tracing, null, 5));
+            //return res.json({data:tracing});
+                res.send(JSON.stringify(tracing, null, 5))
         }
     });
 };
@@ -48,7 +49,7 @@ router.addTracing = (req, res) => {
     tracing.projectName = req.body.projectName;
     //tracing.stages = req.body.stages;
     //tracing.stagesNumber = req.body.stagesNumber;
-    //tracing.status = req.body.status;
+    tracing.status = req.body.status;
     //tracing.teamsID = req.body.teamsID;
     //tracing.teamsNum = req.body.teamsNum;
     //tracing.tasksID = req.body.tasksID;
@@ -68,13 +69,13 @@ router.addTracing = (req, res) => {
     });
 };
 
-//update project name
-router.updateProjectName = (req, res) => {
+//update project
+router.updateProject = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
@@ -83,39 +84,48 @@ router.updateProjectName = (req, res) => {
                 let originalProjectName = tracing.projectName;
                 let newProjectName = req.body.projectName;
 
-                if (originalProjectName === newProjectName) {
-                    return res.json({message: "original one and new can't be same!"});
-                } else {
-                    tracing.projectName = newProjectName;
+                let originalStatus = tracing.status;
+                let newStatus = req.body.status;
 
-                    tracing.stagesNum = tracing.stages.length;
-                    tracing.teamsNum = tracing.teamsID.length;
-                    tracing.tasksNum = tracing.tasksID.length;
-
-                    //update last modified time
-                    tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-
-                    tracing.save(function (err) {
-                        if (err)
-                            return res.json({message: "project name NOT Successfully Updated!", errmsg: err});
-                        // return a error message
-                        else
-                            return res.json({message: 'project name Successfully Updated!', data: tracing});
-                        // return a success message
-                    })
+                if (req.body.projectName == null) {
+                    newProjectName = originalProjectName;
                 }
+                if (req.body.status == null) {
+                    newStatus = originalStatus;
+                }
+
+                tracing.projectName = newProjectName;
+                tracing.status = newStatus;
+
+                tracing.stagesNum = tracing.stages.length;
+                tracing.teamsNum = tracing.teamsID.length;
+                tracing.tasksNum = tracing.tasksID.length;
+
+                //update last modified time
+                tracing.lastModifiedTime = sd.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+
+                tracing.save(function (err) {
+                    if (err)
+                        return res.json({message: "project NOT Successfully Updated!", errmsg: err});
+                    // return a error message
+                    else
+                        return res.json({message: 'project Successfully Updated!', data: tracing});
+                    // return a success message
+                })
+
             }
         }
     });
 };
 
 //update project status
+/*
 router.updateProjectStatus = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
@@ -148,6 +158,7 @@ router.updateProjectStatus = (req, res) => {
         }
     });
 };
+*/
 
 //modify stage
 router.updateStage = (req, res) => {
@@ -155,7 +166,7 @@ router.updateStage = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            return res.send(JSON.stringify(err, null, 5));
+            return res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
@@ -190,7 +201,7 @@ router.addStages = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            res.send(JSON.stringify(err, null, 5));
+            res.json(err);
         else {
 
             if (tracing == null) {
@@ -257,7 +268,7 @@ router.deleteStage = (req, res) => {
 
     Tracing.findById(req.params.projectID, function (err, tracing) {
         if (err)
-            res.send(JSON.stringify(err, null, 5));
+            res.json(err);
         else {
             if (tracing == null) {
                 return res.json({message: "project NOT Found!"});
