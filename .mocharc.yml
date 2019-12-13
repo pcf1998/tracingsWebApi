@@ -3,4 +3,5 @@ file:
   - ./test/functional/api/teamsTest.js
   - ./test/functional/api/tracingsTest.js
   - ./test/functional/api/usersTest.js
+require: '@babel/register'
 exit: true

@@ -6,107 +6,107 @@ let mongoose = require("../../../routes/db")
 
 describe("User", () => {
 
-    describe("GET /users", () => {
-        it("should return all the users", done => {
-            request(server)
-                .get("/users")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(200)
-                .end((err, res) => {
-                    expect(res.body).to.be.a("array")
-                    done(err)
-                })
+  describe("GET /users", () => {
+    it("should return all the users", done => {
+      request(server)
+        .get("/users")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .end((err, res) => {
+          expect(res.body).to.be.a("array")
+          done(err)
         })
     })
+  })
 
-    describe("GET /users/:userID", () => {
+  describe("GET /users/:userID", () => {
 
-        describe("when the user id is valid", () => {
-            it("should return the matching user", done => {
-                request(server)
-                    .get("/users/5db5789c3e7f3c0666c9c0b0")
-                    .set("Accept", "application/json")
-                    .expect("Content-Type", /json/)
-                    .expect(200)
-                    .end((err, res) => {
-                        expect(res.body).to.deep.include({_id: "5db5789c3e7f3c0666c9c0b0"})
-                        done(err)
-                    })
-            })
-        })
+    describe("when the user id is valid", () => {
+      it("should return the matching user", done => {
+        request(server)
+          .get("/users/5db5789c3e7f3c0666c9c0b0")
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body).to.deep.include({_id: "5db5789c3e7f3c0666c9c0b0"})
+            done(err)
+          })
+      })
+    })
 
-        describe("when the user id is invalid", () => {
-            it("should return the NOT found message", done => {
-                request(server)
-                    .get("/users/9999")
-                    .set("Accept", "application/json")
-                    .expect("Content-Type", /json/)
-                    .expect(200)
-                    .expect({
-                        message:
+    describe("when the user id is invalid", () => {
+      it("should return the NOT found message", done => {
+        request(server)
+          .get("/users/9999")
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .expect({
+            message:
                             "Cast to ObjectId failed for value \"9999\" at path \"_id\" for model \"User\"",
-                        name: "CastError",
-                        stringValue: "\"9999\"",
-                        kind: "ObjectId",
-                        value: "9999",
-                        path: "_id"
-                    }, (err, res) => {
-                        done(err)
-                    })
-            })
-        })
-
+            name: "CastError",
+            stringValue: "\"9999\"",
+            kind: "ObjectId",
+            value: "9999",
+            path: "_id"
+          }, (err, res) => {
+            done(err)
+          })
+      })
     })
 
-    describe("POST /users", () => {
-        it("should return confirmation message and add user", () => {
-            let user = {
-                userName: "testtesttest",
-                userPassword: "test123456",
-                email: "testtesttest@example.com",
-                mobilePhone: "1023945886",
-                gender: "male",
-                dateOfBirth: "1949-10-01"
-            }
-            return request(server)
-                .post("/users")
-                .send(user)
-                .expect(200)
-                .expect({message: "User Successfully Added!"})
-        })
-    })
+  })
 
-    describe("PUT /users/:userID/userName", () => {
-        it("should return confirmation message and update user name", () => {
-            request(server)
-                .put("/users/5db5789c3e7f3c0666c9c0b0/userName")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .send({userName: "banana-test"})
-                .expect(200)
-                .end((err, res) => {
-                    expect({message: "user name Successfully Updated!"})
-                    done(err)
-                })
-        })
+  describe("POST /users", () => {
+    it("should return confirmation message and add user", () => {
+      let user = {
+        userName: "testtesttest",
+        userPassword: "test123456",
+        email: "testtesttest@example.com",
+        mobilePhone: "1023945886",
+        gender: "male",
+        dateOfBirth: "1949-10-01"
+      }
+      return request(server)
+        .post("/users")
+        .send(user)
+        .expect(200)
+        .expect({message: "User Successfully Added!"})
     })
+  })
 
-    describe("PUT /users/:userID/userPassword", () => {
-        it("should return confirmation message and update user password", () => {
-            request(server)
-                .put("/users/5db5789c3e7f3c0666c9c0b0/userPassword")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .send({userPassword: "banana123456789"})
-                .expect(200)
-                .end((err, res) => {
-                    expect({message: "User password Successfully Updated!"})
-                    done(err)
-                })
+  describe("PUT /users/:userID/userName", () => {
+    it("should return confirmation message and update user name", () => {
+      request(server)
+        .put("/users/5db5789c3e7f3c0666c9c0b0/userName")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .send({userName: "banana-test"})
+        .expect(200)
+        .end((err, res) => {
+          expect({message: "user name Successfully Updated!"})
+          done(err)
         })
     })
-/*
+  })
+
+  describe("PUT /users/:userID/userPassword", () => {
+    it("should return confirmation message and update user password", () => {
+      request(server)
+        .put("/users/5db5789c3e7f3c0666c9c0b0/userPassword")
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .send({userPassword: "banana123456789"})
+        .expect(200)
+        .end((err, res) => {
+          expect({message: "User password Successfully Updated!"})
+          done(err)
+        })
+    })
+  })
+  /*
 
     describe("PUT /users/:userID/status", () => {
         it("should return confirmation message and update user status", () => {
@@ -304,33 +304,33 @@ describe("User", () => {
     })
 */
 
-    describe("DELETE /users/:userID", () => {
+  describe("DELETE /users/:userID", () => {
 
-        describe("when the user id is invalid", () => {
-            it("should return the NOT found message", done => {
-                request(server)
-                    .delete("/users/9999")
-                    .set("Accept", "application/json")
-                    .expect("Content-Type", /json/)
-                    .expect(200)
-                    .expect({
-                        message: "user NOT Successfully Deleted!",
-                        errmsg:
+    describe("when the user id is invalid", () => {
+      it("should return the NOT found message", done => {
+        request(server)
+          .delete("/users/9999")
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .expect({
+            message: "user NOT Successfully Deleted!",
+            errmsg:
                             {
-                                message:
+                              message:
                                     "Cast to ObjectId failed for value \"9999\" at path \"_id\" for model \"User\"",
-                                name: "CastError",
-                                stringValue: "\"9999\"",
-                                kind: "ObjectId",
-                                value: "9999",
-                                path: "_id"
+                              name: "CastError",
+                              stringValue: "\"9999\"",
+                              kind: "ObjectId",
+                              value: "9999",
+                              path: "_id"
                             }
-                    }, (err, res) => {
-                        done(err)
-                    })
-            })
-        })
-
-
+          }, (err, res) => {
+            done(err)
+          })
+      })
     })
+
+
+  })
 })
