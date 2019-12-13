@@ -106,7 +106,7 @@ router.addUser = (req, res) => {
                 if (err)
                     return res.json({message: "User NOT Successfully Added after saved!", errmsg: err});
                 else
-                    return res.json({message: 'User Successfully Added!', data: user});
+                    return res.json({message: 'User Successfully Added!'});
             });
         }
     });
