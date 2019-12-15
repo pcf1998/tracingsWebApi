@@ -30,7 +30,7 @@ app.use("/users", usersRouter)
 app.use(cors())
 
 //log in
-//app.post('/login', users.login);
+app.post('/login', users.login);
 
 //for users
 app.get("/users", users.findAll)
@@ -65,7 +65,7 @@ app.post("/tracings/:projectID/teams/:teamID/teamMembersID", teams.addTeamMember
 //for users
 app.put("/users/:userID/userName", users.updateUserName)
 app.put("/users/:userID/userPassword", users.updateUserPassword)
-/*app.put('/users/:userID/status', users.updateStatus);
+app.put('/users/:userID/status', users.updateStatus);
 app.put('/users/:userID/department', users.updateDepartment);
 app.put('/users/:userID/position', users.updatePosition);
 app.put('/users/:userID/email', users.updateEmail);
@@ -77,7 +77,7 @@ app.put('/users/:userID/gender', users.updateGender);
 app.put('/users/:userID/dateOfBirth', users.updateDateOfBirth);
 app.put('/users/:userID/educationalDegree', users.updateEducationalDegree);
 app.put('/users/:userID/maritalStatus', users.updateMaritalStatus);
-app.put('/users/:userID/entryDate', users.updateEntryDate);*/
+app.put('/users/:userID/entryDate', users.updateEntryDate);
 //app.put('/users/:userID/leave', users.updateLeave);
 //for tracings
 app.put("/tracings/:projectID", tracings.updateProject)
@@ -106,18 +106,18 @@ app.delete("/tracings/:projectID/teams/:teamID/teamMembersID/:teamMemberID", tea
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404))
+    next(createError(404))
 })
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get("env") === "development" ? err : {}
+    // set locals, only providing error in development
+    res.locals.message = err.message
+    res.locals.error = req.app.get("env") === "development" ? err : {}
 
-  // render the error page
-  res.status(err.status || 500)
-  res.render("error")
+    // render the error page
+    res.status(err.status || 500)
+    res.render("error")
 })
 
 module.exports = app

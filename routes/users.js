@@ -5,7 +5,6 @@ let sd = require("silly-datetime")
 let router = express.Router()
 
 //login
-/*
 router.login = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
@@ -32,7 +31,6 @@ router.login = (req, res) => {
         }
     });
 };
-*/
 
 //find all users
 router.findAll = (req, res) => {
@@ -172,7 +170,6 @@ router.updateUserPassword = (req, res) => {
     }
   })
 }
-/*
 
 //update Status
 router.updateStatus = (req, res) => {
@@ -537,7 +534,6 @@ router.updateEntryDate = (req, res) => {
         }
     });
 };
-*/
 
 //update Leave
 /*
